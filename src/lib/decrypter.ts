@@ -1,20 +1,15 @@
 import Base64 from 'base-64';
-import {
-  bufferToHex,
-  ecrecover,
-  fromRpcSig,
-  hashPersonalMessage,
-  publicToAddress,
-  toBuffer,
-} from 'ethereumjs-util';
-import toHex from 'to-hex';
+import { recoverMessageAddress } from 'viem';
 
 import { DecrypterResult } from './interfaces';
 
 const getVersion = (body: string): number => {
-  const [str] = body.match(/Web3[\s-]+Token[\s-]+Version: \d/);
+  const match = body.match(/Web3[\s-]+Token[\s-]+Version: \d/);
+  if (!match || !match.length) {
+    throw new Error('Token malformed (missing version)');
+  }
 
-  return Number(str.replace(' ', '').split(':')[1]);
+  return Number(match[0].replace(' ', '').split(':')[1]);
 };
 
 export const decrypt = (token: string): DecrypterResult => {
@@ -44,25 +39,18 @@ export const decrypt = (token: string): DecrypterResult => {
     throw new Error('Token malformed (empty signature)');
   }
 
-  const msgBuffer = toBuffer('0x' + toHex(body));
-  const msgHash = hashPersonalMessage(msgBuffer);
-  const signatureBuffer = toBuffer(signature);
-  const signatureParams = fromRpcSig(signatureBuffer as any);
+  const signatureBuffer = Buffer.from(signature.slice(2), 'hex');
 
-  const publicKey = ecrecover(
-    msgHash,
-    signatureParams.v,
-    signatureParams.r,
-    signatureParams.s
-  );
-  const addressBuffer = publicToAddress(publicKey);
-  const address = bufferToHex(addressBuffer).toLowerCase();
+  const address = recoverMessageAddress({
+    message: body,
+    signature: signatureBuffer,
+  });
 
   const version = getVersion(body);
 
   return {
     version,
-    address,
+    address: address.toLowerCase(),
     body,
     signature,
   };
