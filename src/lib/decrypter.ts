@@ -1,5 +1,5 @@
 import Base64 from 'base-64';
-import { recoverMessageAddress } from 'viem';
+import { recoverMessageAddress } from 'viem/utils';
 
 import { DecrypterResult } from './interfaces';
 

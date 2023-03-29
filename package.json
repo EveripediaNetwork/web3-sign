@@ -1,10 +1,10 @@
 {
   "name": "@everipedia/web3-signer",
-  "version": "0.0.1",
-  "description": "web3-signer",
+  "version": "0.0.2",
+  "description": "web3 signer",
   "main": "build/module/index.js",
   "type": "module",
-  "repository": "https://github.com/EveripediaNetwork/web3-signer",
+  "repository": "https://github.com/EveripediaNetwork/web3-sign",
   "license": "MIT",
   "keywords": [
     "viem",
