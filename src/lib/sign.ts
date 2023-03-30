@@ -2,9 +2,9 @@ import { isDate } from 'util/types';
 
 import Base64 from 'base-64';
 
-import { SignBody, Signer, SignOpts } from './interfaces.js';
-import { timeSpan } from './timespan.js';
-import { isNumber, isURL, isValidDomain, isValidString } from './utils.js';
+import { SignBody, Signer, SignOpts } from './interfaces';
+import { timeSpan } from './timespan';
+import { isNumber, isURL, isValidDomain, isValidString } from './utils';
 
 /**
  * Sign a token
