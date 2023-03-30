@@ -17,7 +17,7 @@ import { isNumber, isURL, isValidDomain, isValidString } from './utils';
  *
  * const token = await sign(signer, {
  *  domain: 'example.com',
- * expires_in: '1d',
+ *  expires_in: '1d',
  * });
  * ```
  *
