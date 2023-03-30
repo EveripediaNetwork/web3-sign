@@ -1,10 +1,8 @@
-import { isDate } from 'util/types';
-
 import Base64 from 'base-64';
 
-import { SignBody, Signer, SignOpts } from './interfaces';
+import type { SignBody, Signer, SignOpts } from './interfaces';
 import { timeSpan } from './timespan';
-import { isNumber, isURL, isValidDomain, isValidString } from './utils';
+import { isDate, isNumber, isURL, isValidDomain, isValidString } from './utils';
 
 /**
  * Sign a token

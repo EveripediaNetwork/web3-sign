@@ -1,7 +1,7 @@
 import parseAsHeaders from 'parse-headers';
 
 import { decrypt } from './decrypter';
-import { DecryptedBody, MessageSections, VerifyOpts } from './interfaces';
+import type { DecryptedBody, MessageSections, VerifyOpts } from './interfaces';
 
 /**
  * Parses the lines of a message into an array of message sections.

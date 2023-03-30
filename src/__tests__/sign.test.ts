@@ -2,7 +2,7 @@ import { describe, expect, it } from '@jest/globals';
 import * as Ethers from 'ethers';
 
 import { sign } from '../index';
-import { Signer } from '../lib/interfaces';
+import type { Signer } from '../lib/interfaces';
 
 const mnemonic = Ethers.Mnemonic.fromPhrase(
   'abandon abandon abandon abandon abandon abandon abandon abandon abandon abandon abandon about'
