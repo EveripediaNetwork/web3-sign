@@ -1,7 +1,7 @@
 import parseAsHeaders from 'parse-headers';
 
-import { decrypt } from './decrypter';
-import { DecryptedBody, MessageSections, VerifyOpts } from './interfaces';
+import { decrypt } from './decrypter.js';
+import { DecryptedBody, MessageSections, VerifyOpts } from './interfaces.js';
 
 /**
  * Parses the lines of a message into an array of message sections.

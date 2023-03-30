@@ -1,7 +1,7 @@
 import { describe, expect, it } from '@jest/globals';
 import * as Ethers from 'ethers';
 
-import { sign, verify } from '../index';
+import { sign, verify } from '../index.js';
 
 const mnemonic = Ethers.Mnemonic.fromPhrase(
   'abandon abandon abandon abandon abandon abandon abandon abandon abandon abandon abandon about'

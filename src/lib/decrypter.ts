@@ -1,7 +1,7 @@
 import Base64 from 'base-64';
 import { recoverMessageAddress } from 'viem/utils';
 
-import { DecrypterResult } from './interfaces';
+import { DecrypterResult } from './interfaces.js';
 
 /**
  * Retrieves the version number from the body of a token.
