@@ -3,6 +3,13 @@ import { recoverMessageAddress } from 'viem/utils';
 
 import { DecrypterResult } from './interfaces';
 
+/**
+ * Retrieves the version number from the body of a token.
+ *
+ * @param body - The body of the token.
+ * @returns The version number.
+ * @throws An error if the token is malformed or the version number is missing.
+ */
 const getVersion = (body: string): number => {
   const match = body.match(/Web3[\s-]+Token[\s-]+Version: \d/);
   if (!match || !match.length) {
@@ -12,6 +19,13 @@ const getVersion = (body: string): number => {
   return Number(match[0].replace(' ', '').split(':')[1]);
 };
 
+/**
+ * Decrypts a token and returns the result.
+ *
+ * @param token - The token to decrypt.
+ * @returns The result of the decryption.
+ * @throws An error if the token is empty, not base64 encoded, unparsable JSON, or malformed in some other way.
+ */
 export const decrypt = (token: string): DecrypterResult => {
   if (!token || !token.length) {
     throw new Error('Token required.');
@@ -40,12 +54,10 @@ export const decrypt = (token: string): DecrypterResult => {
   }
 
   const signatureBuffer = Buffer.from(signature.slice(2), 'hex');
-
   const address = recoverMessageAddress({
     message: body,
     signature: signatureBuffer,
   });
-
   const version = getVersion(body);
 
   return {
