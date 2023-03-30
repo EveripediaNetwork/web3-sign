@@ -3,79 +3,98 @@ import parseAsHeaders from 'parse-headers';
 import { decrypt } from './decrypter';
 import { DecryptedBody, MessageSections, VerifyOpts } from './interfaces';
 
-const getDomain = (sections: MessageSections): string | null => {
-  if (
-    / wants you to sign in with your Ethereum account\.$/.test(sections[0][0])
-  ) {
-    return sections[0][0]
+/**
+ * Parses the lines of a message into an array of message sections.
+ * @param lines - The lines of the message.
+ * @returns An array of message sections.
+ */
+function splitSections(lines: string[]): MessageSections {
+  const sections: MessageSections = [[]];
+  for (const line of lines) {
+    if (line === '') {
+      sections.push([]);
+    } else {
+      sections[sections.length - 1].push(line);
+    }
+  }
+  return sections;
+}
+
+/**
+ * Extracts the domain from an array of message sections.
+ * @param sections - An array of message sections.
+ * @returns The domain, or `null` if it cannot be extracted.
+ */
+function extractTokenDomain(sections: MessageSections): string | null {
+  const lastLine = sections[0][sections[0].length - 1];
+  if (lastLine.endsWith(' wants you to sign in with your Ethereum account.')) {
+    return lastLine
       .replace(' wants you to sign in with your Ethereum account.', '')
       .trim();
   }
   return null;
-};
+}
 
-const splitSections = (lines: string[]): MessageSections => {
-  const sections: MessageSections = [[]];
-  let section_number = 0;
-  for (const line of lines) {
-    sections[section_number].push(line);
-    if (line === '') {
-      section_number++;
-      sections.push([]);
-    }
+/**
+ * Extracts the statement from an array of message sections.
+ * @param sections - An array of message sections.
+ * @returns The statement, or `null` if it cannot be extracted.
+ */
+function extractTokenStatement(sections: MessageSections): string | null {
+  if (sections.length === 2 && !extractTokenDomain(sections)) {
+    return sections[0][0];
   }
-
-  return sections;
-};
-
-const getStatement = (sections: MessageSections): string | null => {
-  if (sections.length === 2) {
-    const has_domain = !!getDomain(sections);
-
-    if (!has_domain) {
-      return sections[0][0];
-    }
-  } else if (sections.length === 3) {
+  if (sections.length === 3) {
     return sections[1][0];
   }
   return null;
-};
+}
 
+/**
+ * Parses the decrypted body of a token.
+ * @param lines - The lines of the decrypted body.
+ * @returns The parsed decrypted body.
+ * @throws An error if the decrypted body is damaged.
+ */
 const parseBody = (lines: string[]): DecryptedBody => {
-  const sections = splitSections(lines);
-  const main_section = sections[sections.length - 1].join('\n');
-  const parsed_body = parseAsHeaders(main_section) as any;
+  const bodySections = splitSections(lines);
+  const mainBodySection = bodySections[bodySections.length - 1].join('\n');
+  const parsedHeaders = parseAsHeaders(mainBodySection) as any;
 
-  for (const key in parsed_body) {
-    const new_key = key.replace(/ /g, '-');
-    parsed_body[new_key] = parsed_body[key];
-    if (new_key !== key) {
-      delete parsed_body[key];
+  for (const key in parsedHeaders) {
+    const hyphenatedKey = key.replace(/ /g, '-');
+    parsedHeaders[hyphenatedKey] =
+      parsedHeaders[key as keyof typeof parsedHeaders];
+    if (hyphenatedKey !== key) {
+      delete parsedHeaders[key];
     }
   }
 
-  const domain = getDomain(sections);
-  const statement = getStatement(sections);
-
-  if (typeof domain !== 'undefined') {
-    parsed_body.domain = domain;
-  }
-
-  if (typeof statement !== 'undefined') {
-    parsed_body.statement = statement;
-  }
+  const tokenDomain = extractTokenDomain(bodySections);
+  const tokenStatement = extractTokenStatement(bodySections);
 
   if (
-    typeof parsed_body['issued-at'] === 'undefined' ||
-    typeof parsed_body['expiration-time'] === 'undefined' ||
-    typeof parsed_body['web3-token-version'] === 'undefined'
+    typeof parsedHeaders['issued-at'] === 'undefined' ||
+    typeof parsedHeaders['expiration-time'] === 'undefined' ||
+    typeof parsedHeaders['web3-token-version'] === 'undefined'
   ) {
     throw new Error('Decrypted body is damaged');
   }
 
-  return parsed_body;
+  return {
+    ...parsedHeaders,
+    domain: tokenDomain || undefined,
+    statement: tokenStatement || undefined,
+  };
 };
 
+/**
+ * Verifies a token.
+ * @param token - The token to verify.
+ * @param opts - The options for verifying the token.
+ * @returns The verified token.
+ * @throws An error if the token is expired, not yet valid, has an inappropriate domain, or is version 1.
+ */
 export const verify = (token: string, opts: VerifyOpts = {}) => {
   const { version, address, body } = decrypt(token);
 
@@ -86,7 +105,6 @@ export const verify = (token: string, opts: VerifyOpts = {}) => {
   }
 
   const lines = body.split('\n');
-
   const parsed_body = parseBody(lines);
 
   if (new Date(parsed_body['expiration-time']) < new Date()) {
