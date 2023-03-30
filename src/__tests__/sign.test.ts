@@ -3,6 +3,8 @@ import * as Ethers from 'ethers';
 
 import { sign } from '../index';
 
+import { Signer } from '@/lib/interfaces';
+
 const mnemonic = Ethers.Mnemonic.fromPhrase(
   'abandon abandon abandon abandon abandon abandon abandon abandon abandon abandon abandon about'
 );
@@ -47,9 +49,7 @@ describe('Sign method', () => {
     await expect(
       sign((body) => ethers_signer.signMessage(body), {
         domain: 'worldofdefish.com',
-
-        // @ts-ignore
-        chain_id: 'ssssa23dsa',
+        chain_id: 'ssssa23dsa' as unknown as number,
       })
     ).rejects.toThrowError();
   });
@@ -97,7 +97,6 @@ describe('Sign method', () => {
   });
 
   it('throw error signer must be a function', async () => {
-    // @ts-ignore
-    await expect(sign('qwe')).rejects.toThrowError();
+    await expect(sign('qwe' as unknown as Signer)).rejects.toThrowError();
   });
 });
