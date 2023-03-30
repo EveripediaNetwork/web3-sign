@@ -1,6 +1,6 @@
 {
   "name": "@everipedia/web3-signer",
-  "version": "0.0.8",
+  "version": "0.0.9",
   "description": "web3 signer",
   "module": "dist/src/index.js",
   "types": "dist/src/index.d.ts",
