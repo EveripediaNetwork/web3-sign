@@ -1,5 +1,5 @@
-import { sign } from './lib/sign';
-import { verify } from './lib/verify';
+import { sign } from './lib/sign.js';
+import { verify } from './lib/verify.js';
 
 const Web3Sign = {
   sign,
