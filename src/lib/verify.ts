@@ -1,7 +1,7 @@
-import parseAsHeaders from 'parse-headers';
+import parseAsHeaders from 'parse-headers'
 
-import { decrypt } from './decrypter';
-import type { DecryptedBody, MessageSections, VerifyOpts } from './interfaces';
+import { decrypt } from './decrypter'
+import type { DecryptedBody, MessageSections, VerifyOpts } from './interfaces'
 
 /**
  * Parses the lines of a message into an array of message sections.
@@ -9,15 +9,15 @@ import type { DecryptedBody, MessageSections, VerifyOpts } from './interfaces';
  * @returns An array of message sections.
  */
 function splitSections(lines: string[]): MessageSections {
-  const sections: MessageSections = [[]];
+  const sections: MessageSections = [[]]
   for (const line of lines) {
     if (line === '') {
-      sections.push([]);
+      sections.push([])
     } else {
-      sections[sections.length - 1].push(line);
+      sections[sections.length - 1].push(line)
     }
   }
-  return sections;
+  return sections
 }
 
 /**
@@ -26,13 +26,13 @@ function splitSections(lines: string[]): MessageSections {
  * @returns The domain, or `null` if it cannot be extracted.
  */
 function extractTokenDomain(sections: MessageSections): string | null {
-  const lastLine = sections[0][sections[0].length - 1];
+  const lastLine = sections[0][sections[0].length - 1]
   if (lastLine.endsWith(' wants you to sign in with your Ethereum account.')) {
     return lastLine
       .replace(' wants you to sign in with your Ethereum account.', '')
-      .trim();
+      .trim()
   }
-  return null;
+  return null
 }
 
 /**
@@ -42,12 +42,12 @@ function extractTokenDomain(sections: MessageSections): string | null {
  */
 function extractTokenStatement(sections: MessageSections): string | null {
   if (sections.length === 2 && !extractTokenDomain(sections)) {
-    return sections[0][0];
+    return sections[0][0]
   }
   if (sections.length === 3) {
-    return sections[1][0];
+    return sections[1][0]
   }
-  return null;
+  return null
 }
 
 /**
@@ -57,36 +57,36 @@ function extractTokenStatement(sections: MessageSections): string | null {
  * @throws An error if the decrypted body is damaged.
  */
 const parseBody = (lines: string[]): DecryptedBody => {
-  const bodySections = splitSections(lines);
-  const mainBodySection = bodySections[bodySections.length - 1].join('\n');
-  const parsedHeaders = parseAsHeaders(mainBodySection) as any;
+  const bodySections = splitSections(lines)
+  const mainBodySection = bodySections[bodySections.length - 1].join('\n')
+  const parsedHeaders = parseAsHeaders(mainBodySection) as any
 
   for (const key in parsedHeaders) {
-    const hyphenatedKey = key.replace(/ /g, '-');
+    const hyphenatedKey = key.replace(/ /g, '-')
     parsedHeaders[hyphenatedKey] =
-      parsedHeaders[key as keyof typeof parsedHeaders];
+      parsedHeaders[key as keyof typeof parsedHeaders]
     if (hyphenatedKey !== key) {
-      delete parsedHeaders[key];
+      delete parsedHeaders[key]
     }
   }
 
-  const tokenDomain = extractTokenDomain(bodySections);
-  const tokenStatement = extractTokenStatement(bodySections);
+  const tokenDomain = extractTokenDomain(bodySections)
+  const tokenStatement = extractTokenStatement(bodySections)
 
   if (
     typeof parsedHeaders['issued-at'] === 'undefined' ||
     typeof parsedHeaders['expiration-time'] === 'undefined' ||
     typeof parsedHeaders['web3-token-version'] === 'undefined'
   ) {
-    throw new Error('Decrypted body is damaged');
+    throw new Error('Decrypted body is damaged')
   }
 
   return {
     ...parsedHeaders,
     domain: tokenDomain || undefined,
     statement: tokenStatement || undefined,
-  };
-};
+  }
+}
 
 /**
  * Verifies a token.
@@ -96,31 +96,31 @@ const parseBody = (lines: string[]): DecryptedBody => {
  * @throws An error if the token is expired, not yet valid, has an inappropriate domain, or is version 1.
  */
 export const verify = (token: string, opts: VerifyOpts = {}) => {
-  const { version, address, body } = decrypt(token);
+  const { version, address, body } = decrypt(token)
 
   if (version === 1) {
     throw new Error(
-      'Tokens version 1 are not supported by the current version of module'
-    );
+      'Tokens version 1 are not supported by the current version of module',
+    )
   }
 
-  const lines = body.split('\n');
-  const parsed_body = parseBody(lines);
+  const lines = body.split('\n')
+  const parsed_body = parseBody(lines)
 
   if (new Date(parsed_body['expiration-time']) < new Date()) {
-    throw new Error('Token expired');
+    throw new Error('Token expired')
   }
 
   if (
     parsed_body['not-before'] &&
     new Date(parsed_body['not-before']) > new Date()
   ) {
-    throw new Error("It's not yet time to use the token");
+    throw new Error("It's not yet time to use the token")
   }
 
   if (opts.domain && opts.domain !== parsed_body.domain) {
-    throw new Error('Inappropriate token domain');
+    throw new Error('Inappropriate token domain')
   }
 
-  return { address, body: parsed_body };
-};
+  return { address, body: parsed_body }
+}

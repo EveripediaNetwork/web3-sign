@@ -1,8 +1,8 @@
-import Base64 from 'base-64';
+import Base64 from 'base-64'
 
-import type { SignBody, Signer, SignOpts } from './interfaces';
-import { timeSpan } from './timespan';
-import { isDate, isNumber, isURL, isValidDomain, isValidString } from './utils';
+import type { SignBody, Signer, SignOpts } from './interfaces'
+import { timeSpan } from './timespan'
+import { isDate, isNumber, isURL, isValidDomain, isValidString } from './utils'
 
 /**
  * Sign a token
@@ -23,26 +23,26 @@ import { isDate, isNumber, isURL, isValidDomain, isValidString } from './utils';
  **/
 export const sign = async (
   signer: Signer,
-  opts: string | SignOpts = '1d'
+  opts: string | SignOpts = '1d',
 ): Promise<string> => {
-  const params = typeof opts === 'string' ? { expires_in: opts } : opts;
+  const params = typeof opts === 'string' ? { expires_in: opts } : opts
 
-  validateParams(params);
+  validateParams(params)
 
-  const body = processParams(params);
-  const msg = buildMessage(body);
-  const signature = await signer(msg);
+  const body = processParams(params)
+  const msg = buildMessage(body)
+  const signature = await signer(msg)
 
   if (typeof signature !== 'string') {
     throw new Error(
-      '"signer" argument should be a function that returns a signature string (Promise<string>)'
-    );
+      '"signer" argument should be a function that returns a signature string (Promise<string>)',
+    )
   }
 
-  const token = Base64.encode(JSON.stringify({ signature, body: msg }));
+  const token = Base64.encode(JSON.stringify({ signature, body: msg }))
 
-  return token;
-};
+  return token
+}
 
 /**
  * Validate params
@@ -52,47 +52,47 @@ export const sign = async (
  **/
 const validateParams = (params: SignOpts): void => {
   for (const key in params) {
-    const value = params[key as keyof SignOpts];
+    const value = params[key as keyof SignOpts]
     if (typeof value === 'string' && /\n/.test(value)) {
-      throw new Error(`"${key}" option cannot have LF (\\n)`);
+      throw new Error(`"${key}" option cannot have LF (\\n)`)
     }
   }
 
   if (params.domain !== undefined) {
-    const domain = params.domain as unknown;
+    const domain = params.domain as unknown
     if (!isValidString(domain) || !isValidDomain(domain)) {
-      throw new Error('Invalid domain format (must be example.com)');
+      throw new Error('Invalid domain format (must be example.com)')
     }
   }
 
   if (params.uri !== undefined) {
-    const uri = params.uri as unknown;
+    const uri = params.uri as unknown
     if (!isValidString(uri) || !isURL(uri)) {
-      throw new Error('Invalid uri format (must be https://example.com/login)');
+      throw new Error('Invalid uri format (must be https://example.com/login)')
     }
   }
 
   if (params.chain_id !== undefined) {
-    const chainId = params.chain_id as unknown;
+    const chainId = params.chain_id as unknown
     if (!isNumber(chainId)) {
-      throw new Error('chain_id must be an int');
+      throw new Error('chain_id must be an int')
     }
   }
 
   if (params.expiration_time !== undefined) {
-    const expirationTime = params.expiration_time as unknown;
+    const expirationTime = params.expiration_time as unknown
     if (!isDate(expirationTime)) {
-      throw new Error('expiration_time must be an instance of Date');
+      throw new Error('expiration_time must be an instance of Date')
     }
   }
 
   if (params.not_before !== undefined) {
-    const notBefore = params.not_before as unknown;
+    const notBefore = params.not_before as unknown
     if (!isDate(notBefore)) {
-      throw new Error('not_before must be an instance of Date');
+      throw new Error('not_before must be an instance of Date')
     }
   }
-};
+}
 
 /**
  * Process params
@@ -120,9 +120,9 @@ const processParams = (params: SignOpts): SignBody => {
     request_id: params.request_id,
     domain: params.domain,
     statement: params.statement,
-  };
-  return body;
-};
+  }
+  return body
+}
 
 /**
  * Build message
@@ -130,18 +130,18 @@ const processParams = (params: SignOpts): SignBody => {
  * @returns Message
  **/
 const buildMessage = (params: SignBody): string => {
-  const message: string[] = [];
+  const message: string[] = []
 
   if (params.domain) {
     message.push(
-      `${params.domain} wants you to sign in with your Ethereum account.`
-    );
-    message.push('');
+      `${params.domain} wants you to sign in with your Ethereum account.`,
+    )
+    message.push('')
   }
 
   if (params.statement) {
-    message.push(params.statement);
-    message.push('');
+    message.push(params.statement)
+    message.push('')
   }
 
   const paramLabels = {
@@ -155,14 +155,14 @@ const buildMessage = (params: SignBody): string => {
       ? params.not_before.toISOString()
       : undefined,
     'Request ID': params.request_id,
-  };
+  }
 
   for (const label in paramLabels) {
-    const value = paramLabels[label as keyof typeof paramLabels];
+    const value = paramLabels[label as keyof typeof paramLabels]
     if (value !== undefined) {
-      message.push(`${label}: ${value}`);
+      message.push(`${label}: ${value}`)
     }
   }
 
-  return message.join('\n');
-};
+  return message.join('\n')
+}
