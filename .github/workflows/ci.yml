@@ -1,8 +1,8 @@
-name: CI rome
+name: CI (lint + tests)
 on: [push]
 jobs:
-  lint:
-    name: Lint using rome
+  ci:
+    name: Lint using rome & Tests with Jest
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
@@ -13,7 +13,7 @@ jobs:
           node-version: 16
       - name: Installing dependencies
         run: yarn install --frozen-lockfile
-      - name: Lint
+      - name: Lint rome
         run: yarn rome ci .
-      - name: Tests
+      - name: Tests jest
         run: yarn test
