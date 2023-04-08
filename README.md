@@ -9,11 +9,11 @@ For more information check out the blog post written by [Miroslaw Shpak](https:/
 ## 📖 Table of Contents
 
 - [📖 Table of Contents](#-table-of-contents)
-- [📦 Installation](#-installation)
+- [📦 Installation](#%EF%B8%8F-installation)
 - [🔎 Package TL;DR](#-package-tldr)
 - [⭐ Basic Usage](#-basic-usage)
 - [💻 Example usage (Client side)](#-example-usage-client-side)
-- [☁️ Example usage (Server side)](#-example-usage-server-side)
+- [☁️ Example usage (Server side)](#%EF%B8%8F-example-usage-server-side)
 - [⚙️ API](#-api)
   - [sign(signer, options)](#signsigner-options)
   - [verify(token)](#verifytoken)
