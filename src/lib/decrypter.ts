@@ -26,7 +26,7 @@ const getVersion = (body: string): number => {
  * @returns The result of the decryption.
  * @throws An error if the token is empty, not base64 encoded, unparsable JSON, or malformed in some other way.
  */
-export const decrypt = (token: string): DecrypterResult => {
+export const decrypt = async (token: string): Promise<DecrypterResult> => {
   if (!token || !token.length) {
     throw new Error('Token required.')
   }
@@ -55,7 +55,7 @@ export const decrypt = (token: string): DecrypterResult => {
   }
 
   const signatureBuffer = Buffer.from(signature.slice(2), 'hex')
-  const address = recoverMessageAddress({
+  const address = await recoverMessageAddress({
     message: body,
     signature: signatureBuffer,
   })
