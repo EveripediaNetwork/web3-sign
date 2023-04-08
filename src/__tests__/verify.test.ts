@@ -47,7 +47,11 @@ describe('Verify method', () => {
       },
     )
 
-    expect(async () => await verify(token)).toThrowError()
+    try {
+      await verify(token)
+    } catch (error: any) {
+      expect(error.message).toEqual('Token expired')
+    }
   })
 
   it('must throw an error coz of future not_before date', async () => {
@@ -59,7 +63,11 @@ describe('Verify method', () => {
       },
     )
 
-    expect(async () => await verify(token)).toThrowError()
+    try {
+      await verify(token)
+    } catch (error: any) {
+      expect(error.message).toEqual("It's not yet time to use the token")
+    }
   })
 
   it('must throw an error coz of diff domains', async () => {
@@ -68,12 +76,20 @@ describe('Verify method', () => {
       defaultOptions,
     )
 
-    expect(
-      async () => await verify(token, { domain: 'some-other.domain' }),
-    ).toThrowError()
+    try {
+      await verify(token, { domain: 'some-other.domain' })
+    } catch (error: any) {
+      expect(error.message).toEqual('Inappropriate token domain')
+    }
   })
 
   it('must throw error of malformed token', async () => {
-    expect(async () => await verify('A_BAD_TOKEN')).toThrowError()
+    try {
+      await verify('MALFORMED_TOKEN')
+    } catch (error: any) {
+      expect(error.message).toEqual(
+        'Invalid character: the string to be decoded is not correctly encoded.',
+      )
+    }
   })
 })

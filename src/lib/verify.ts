@@ -118,8 +118,6 @@ export const verify = async (token: string, opts: VerifyOpts = {}) => {
   const lines = body.split('\n')
   const parsed_body = parseBody(lines)
 
-  console.log({ parsed_body })
-
   if (new Date(parsed_body['expiration-time']) < new Date()) {
     throw new Error('Token expired')
   }
