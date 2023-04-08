@@ -97,7 +97,7 @@ const parseBody = (lines: string[]): DecryptedBody => {
  *
  * @example
  * ```ts
- * import { verify } from 'web3-token'
+ * import { verify } from '@everipedia/web3-signer'
  *
  * try {
  * const {address, body} = await verify(token)
