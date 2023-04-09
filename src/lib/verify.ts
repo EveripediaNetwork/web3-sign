@@ -94,9 +94,20 @@ const parseBody = (lines: string[]): DecryptedBody => {
  * @param opts - The options for verifying the token.
  * @returns The verified token.
  * @throws An error if the token is expired, not yet valid, has an inappropriate domain, or is version 1.
+ *
+ * @example
+ * ```ts
+ * import { verify } from '@everipedia/web3-signer'
+ *
+ * try {
+ * const {address, body} = await verify(token)
+ * // if you get address and body, the token is valid
+ * } catch (error) {
+ *  // if you get an error, the token is invalid
+ * }
  */
-export const verify = (token: string, opts: VerifyOpts = {}) => {
-  const { version, address, body } = decrypt(token)
+export const verify = async (token: string, opts: VerifyOpts = {}) => {
+  const { version, address, body } = await decrypt(token)
 
   if (version === 1) {
     throw new Error(

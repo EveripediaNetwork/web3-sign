@@ -11,7 +11,7 @@ import { isDate, isNumber, isURL, isValidDomain, isValidString } from './utils'
  * @returns A signed token
  * @example
  * ```ts
- * import { sign } from 'web3-signer';
+ * import { sign } from '@everipedia/web3-signer';
  *
  * const token = await sign(signer, {
  *  domain: 'example.com',
