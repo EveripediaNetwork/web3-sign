@@ -1,6 +1,6 @@
 # Web3 Signer
 
-![](https://flat.badgen.net/github/release/EveripediaNetwork/web3-signer) ![](http://flat.badgen.net/github/tag/EveripediaNetwork/web3-signer) ![](http://flat.badgen.net/github/open-issues/EveripediaNetwork/web3-signer) ![](http://flat.badgen.net/npm/dt/@everipedia/web3-signer) ![](http://flat.badgen.net/packagephobia/publish/@everipedia/web3-signer) ![](http://flat.badgen.net/github/stars/EveripediaNetwork/web3-signer)
+![](https://flat.badgen.net/github/release/EveripediaNetwork/web3-sign) ![](http://flat.badgen.net/github/tag/EveripediaNetwork/web3-sign) ![](http://flat.badgen.net/github/open-issues/EveripediaNetwork/web3-sign) ![](http://flat.badgen.net/npm/dt/@everipedia/web3-signer) ![](http://flat.badgen.net/packagephobia/publish/@everipedia/web3-signer) ![](http://flat.badgen.net/github/stars/EveripediaNetwork/web3-sign)
 
 Web3 Signer is a library that allows you to authenticate a users using a signature. This library is a fork of [web3-token](https://www.npmjs.com/package/web3-token) which focus on making the library more lightweight. (6.8 MB -> 22.6 kB unpacked)
 
