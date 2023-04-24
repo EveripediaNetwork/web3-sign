@@ -14,5 +14,5 @@
     "types": ["node"],
     "typeRoots": ["node_modules/@types"]
   },
-  "exclude": ["node_modules", "dist", "src/__test__/**"]
+  "exclude": ["node_modules", "dist", "src/__test__/**", "**/*.md"]
 }
