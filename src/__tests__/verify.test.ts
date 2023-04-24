@@ -32,6 +32,7 @@ describe('Verify method', () => {
     )
 
     const { address, body } = await verify(token)
+
     expect(address).toEqual(real_address)
     expect(body['statement']).toEqual(defaultOptions.statement)
     expect(body['domain']).toEqual(defaultOptions.domain)
