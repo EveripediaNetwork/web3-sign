@@ -37,7 +37,7 @@ describe('Verify method', () => {
     expect(body['domain']).toEqual(defaultOptions.domain)
   })
 
-  it.skip('must throw an error coz of past expiration_time', async () => {
+  it('must throw an error coz of past expiration_time', async () => {
     const token = await sign(
       (body) => client.signMessage({ account, message: body }),
       {
@@ -53,7 +53,7 @@ describe('Verify method', () => {
     }
   })
 
-  it.skip('must throw an error coz of future not_before date', async () => {
+  it('must throw an error coz of future not_before date', async () => {
     const token = await sign(
       (body) => client.signMessage({ account, message: body }),
       {
@@ -69,7 +69,7 @@ describe('Verify method', () => {
     }
   })
 
-  it.skip('must throw an error coz of diff domains', async () => {
+  it('must throw an error coz of diff domains', async () => {
     const token = await sign(
       (body) => client.signMessage({ account, message: body }),
       defaultOptions,
