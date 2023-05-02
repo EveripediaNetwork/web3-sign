@@ -1,2 +1,3 @@
 src/__test__/*
 jest.*
+yarn.lock
