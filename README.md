@@ -48,40 +48,6 @@ const token = await sign(signer, {
 
 ## 💻 Example usage (Client side)
 
-Using [Web3](https://www.npmjs.com/package/web3) package:
-
-```js
-import Web3 from "web3";
-import { sign } from "@everipedia/web3-signer";
-
-// Connection to MetaMask wallet
-const web3 = new Web3(ethereum);
-await ethereum.request({ method: "eth_requestAccounts" });
-
-// getting address from which we will sign message
-const address = (await web3.eth.getAccounts())[0];
-
-// generating a token with 1 day of expiration time
-const token = await sign((msg) => web3.eth.personal.sign(msg, address), "1d");
-
-// attaching token to authorization header ... for example
-```
-
-Using [Ethers](https://www.npmjs.com/package/ethers) package:
-
-```js
-import { ethers } from "ethers";
-import { sign } from "@everipedia/web3-signer";
-
-// Connection to MetaMask wallet
-const provider = new ethers.providers.Web3Provider(window.ethereum);
-const signer = provider.getSigner();
-
-// generating a token with 1 day of expiration time
-const token = await sign(async (msg) => await signer.signMessage(msg), "1d");
-
-// attaching token to authorization header ... for example
-```
 
 Using [Viem](https://viem.sh) Package:
 
@@ -105,6 +71,41 @@ const token = await sign(
     }),
   "1d"
 );
+```
+
+Using [Ethers](https://www.npmjs.com/package/ethers) package:
+
+```js
+import { ethers } from "ethers";
+import { sign } from "@everipedia/web3-signer";
+
+// Connection to MetaMask wallet
+const provider = new ethers.providers.Web3Provider(window.ethereum);
+const signer = provider.getSigner();
+
+// generating a token with 1 day of expiration time
+const token = await sign(async (msg) => await signer.signMessage(msg), "1d");
+
+// attaching token to authorization header ... for example
+```
+
+Using [Web3](https://www.npmjs.com/package/web3) package:
+
+```js
+import Web3 from "web3";
+import { sign } from "@everipedia/web3-signer";
+
+// Connection to MetaMask wallet
+const web3 = new Web3(ethereum);
+await ethereum.request({ method: "eth_requestAccounts" });
+
+// getting address from which we will sign message
+const address = (await web3.eth.getAccounts())[0];
+
+// generating a token with 1 day of expiration time
+const token = await sign((msg) => web3.eth.personal.sign(msg, address), "1d");
+
+// attaching token to authorization header ... for example
 ```
 
 ## ☁️ Example usage (Server side)
